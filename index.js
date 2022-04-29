@@ -30,11 +30,10 @@ async function run() {
       const result = await cursor.toArray();
       res.send(result);
     });
-    app.get('/inventory/:id', async (req, res) => {
+    app.delete('/inventory/:id', async (req, res) => {
       const id = req.params.id;
-      console.log(id)
-    const query = { _id: ObjectId(id) };
-      const result = await userCollection.findOne(query)
+      const query = { _id: ObjectId(id) };
+      const result = await userCollection.deleteOne(query);
       res.send(result);
     });
   } finally {
