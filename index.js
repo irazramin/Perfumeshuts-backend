@@ -18,13 +18,17 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
+    await client.connect();
       const userCollection = client
         .db('warehouseDb')
         .collection('productCollections');
 
-app.get('/user', (req, res) => {
-  console.log('connected');
-  res.send('Connect')
+app.get('/inventory',async (req, res) => {
+  const query = {}
+  const cursor = userCollection.find(query);
+  const result = await cursor.toArray();
+
+  res.send(result)
 });
   } finally {
   }
