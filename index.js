@@ -23,7 +23,6 @@ async function run() {
     .db('warehouseDb')
     .collection('productCollections');
   try {
-
     app.get('/inventory', async (req, res) => {
       const query = {};
       const cursor = userCollection.find(query);
@@ -37,12 +36,18 @@ async function run() {
       res.send(result);
     });
 
-    app.post('/additem',async (req,res) =>{
+    app.post('/additem', async (req, res) => {
       const item = req.body;
       const result = await userCollection.insertOne(item);
       res.send(result);
-      console.log(1)
-    })
+    });
+    app.get('/user', async (req, res) => {
+      const email = req.query.email;
+      const query = {email:email};
+      const cursor = userCollection.find(query);
+      const result = await cursor.toArray();
+      res.send(result);
+    });
   } finally {
   }
 }
