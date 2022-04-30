@@ -36,6 +36,13 @@ async function run() {
       const result = await userCollection.deleteOne(query);
       res.send(result);
     });
+
+    app.post('/additem',async (req,res) =>{
+      const item = req.body;
+      const result = await userCollection.insertOne(item);
+      res.send(result);
+      console.log(1)
+    })
   } finally {
   }
 }
