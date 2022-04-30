@@ -19,35 +19,43 @@ const client = new MongoClient(uri, {
 
 async function run() {
   await client.connect();
-  const userCollection = client
+  const productCollection = client
     .db('warehouseDb')
     .collection('productCollections');
   try {
     app.get('/inventory', async (req, res) => {
       const query = {};
-      const cursor = userCollection.find(query);
+      const cursor = productCollection.find(query);
       const result = await cursor.toArray();
       res.send(result);
     });
     app.delete('/inventory/:id', async (req, res) => {
       const id = req.params.id;
       const query = { _id: ObjectId(id) };
-      const result = await userCollection.deleteOne(query);
+      const result = await productCollection.deleteOne(query);
       res.send(result);
     });
 
     app.post('/additem', async (req, res) => {
       const item = req.body;
-      const result = await userCollection.insertOne(item);
+      const result = await productCollection.insertOne(item);
       res.send(result);
     });
     app.get('/user', async (req, res) => {
       const email = req.query.email;
       const query = {email:email};
-      const cursor = userCollection.find(query);
+      const cursor = productCollection.find(query);
       const result = await cursor.toArray();
       res.send(result);
     });
+
+      app.get('/inventory/:id', async (req, res) => {
+        const id = req.params.id;
+        const query = { _id: ObjectId(id) };
+        const cursor =  productCollection.find(query);
+        const result = await cursor.toArray();
+         res.send(result);
+      });
   } finally {
   }
 }
