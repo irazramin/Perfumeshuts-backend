@@ -56,6 +56,11 @@ async function run() {
         const result = await cursor.toArray();
          res.send(result);
       });
+         app.put('/inventory/:id', async (req, res) => {
+           const updatedItem = req.body;
+           const result = await productCollection.insertOne(item);
+           res.send(result);
+         });
   } finally {
   }
 }
