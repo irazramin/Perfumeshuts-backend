@@ -70,6 +70,7 @@ async function run() {
            res.send(result);
          });
 
+         console.log(process.env.ACCESS_TOKEN);
            app.post('/login', async (req, res) => {
              const user = req.body;
              const accessToken = jwt.sign(user,"" + process.env.ACCESS_TOKEN, {
