@@ -5,7 +5,7 @@ const port = process.env.PORT || 5000;
 const cors = require('cors');
 require('dotenv').config();
 const ObjectId = require('mongodb').ObjectId;
-
+const jwt  = require('jsonwebtoken')
 // middleware
 app.use(express.json());
 app.use(cors());
@@ -69,6 +69,15 @@ async function run() {
            const result = await productCollection.updateOne(filter,update,option);
            res.send(result);
          });
+         
+      app.post('/login', async(req,res) =>{
+        const user = req.body;
+        // fa3a914251ab19f3a527d063671a9eb06376887ee6efc912e30154b8eaf5645b29127b1ec47103a3af0e72e7ac3ff260529d97d48d6feb28b91ad77e1cbc94d6
+        const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN, {
+          expiresIn: '1d',
+        });
+        res.send({accessToken});
+      });
   } finally {
   }
 }
