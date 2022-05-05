@@ -11,8 +11,19 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const jwtAuthentication = (req,res,next) =>{
+const jwtVerification = (req,res,next) =>{
       const header = req.headers.authorization;
+      if(!header){
+         return res.status(401).send({message:"unauthorized access"})
+      }
+
+      const accessToken = header.split(' ')[1];
+      jwt.verify(accessToken,process.env.ACCESS_TOKEN, (err,decoded) =>{
+        if(err){
+         return res.status(403).send({ message: 'forbidden access' });
+        }
+        req.decoded = decoded;
+      })
       console.log('inside verify',header)
       next()
 }
@@ -48,14 +59,18 @@ async function run() {
       const result = await productCollection.insertOne(item);
       res.send(result);
     });
-    app.get('/user',jwtAuthentication, async (req, res) => {
-      const userAuth = req.headers.authorization;
-      console.log(userAuth)
+    app.get('/user',jwtVerification, async (req, res) => {
+      const decodedEmail = req.decoded.email;
+
       const email = req.query.email;
-      const query = { email: email };
-      const cursor = productCollection.find(query);
-      const result = await cursor.toArray();
-      res.send(result);
+      if(email === decodedEmail){
+             const query = { email: email };
+             const cursor = productCollection.find(query);
+             const result = await cursor.toArray();
+             res.send(result);
+      }else{
+        return res.status(403).send({message:"forbidden access"})
+      }
     });
 
     app.get('/inventory/:id', async (req, res) => {
