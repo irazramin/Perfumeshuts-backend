@@ -63,7 +63,7 @@ async function run() {
        const email = req.query.email;
        if (email === decodedEmail) {
          const query = { email: email };
-         const cursor = orderCollection.find(query);
+         const cursor = productCollection.find(query);
          const result = await cursor.toArray();
          res.send(result);
        } else {
