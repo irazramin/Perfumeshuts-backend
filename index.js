@@ -11,21 +11,20 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const jwtVerification = (req,res,next) =>{
-      const header = req.headers.authorization;
-      if(!header){
-         return res.status(401).send({message:"unauthorized access"})
-      }
-
-      const accessToken = header.split(' ')[1];
-      jwt.verify(accessToken,process.env.ACCESS_TOKEN, (err,decoded) =>{
-        if(err){
-         return res.status(403).send({ message: 'forbidden access' });
-        }
-        req.decoded = decoded;
-      })
-      console.log('inside verify',header)
-      next()
+function jwtVerification(req, res, next) {
+  const header = req.headers.authorization;
+  if (!header) {
+    return res.status(401).send({ message: 'unauthorized access' });
+  }
+  const token = header.split(' ')[1];
+  jwt.verify(token, process.env.ACCESS_TOKEN, (err, decoded) => {
+    if (err) {
+      return res.status(403).send({ message: 'Forbidden access' });
+    }
+    console.log('decoded', decoded);
+    req.decoded = decoded;
+    next();
+  });
 }
 
 const uri = `mongodb+srv://${process.env.DB_NAME}:${process.env.DB_PASS}@cluster0.kjpmx.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
@@ -60,17 +59,16 @@ async function run() {
       res.send(result);
     });
     app.get('/user',jwtVerification, async (req, res) => {
-      const decodedEmail = req.decoded.email;
-
-      const email = req.query.email;
-      if(email === decodedEmail){
-             const query = { email: email };
-             const cursor = productCollection.find(query);
-             const result = await cursor.toArray();
-             res.send(result);
-      }else{
-        return res.status(403).send({message:"forbidden access"})
-      }
+       const decodedEmail = req.decoded.email;
+       const email = req.query.email;
+       if (email === decodedEmail) {
+         const query = { email: email };
+         const cursor = orderCollection.find(query);
+         const result = await cursor.toArray();
+         res.send(result);
+       } else {
+         res.status(403).send({ message: 'forbidden access' });
+       }
     });
 
     app.get('/inventory/:id', async (req, res) => {
