@@ -11,6 +11,12 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+const jwtAuthentication = (req,res,next) =>{
+      const header = req.headers.authorization;
+      console.log('inside verify',header)
+      next()
+}
+
 const uri = `mongodb+srv://${process.env.DB_NAME}:${process.env.DB_PASS}@cluster0.kjpmx.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
@@ -42,7 +48,7 @@ async function run() {
       const result = await productCollection.insertOne(item);
       res.send(result);
     });
-    app.get('/user', async (req, res) => {
+    app.get('/user',jwtAuthentication, async (req, res) => {
       const userAuth = req.headers.authorization;
       console.log(userAuth)
       const email = req.query.email;
