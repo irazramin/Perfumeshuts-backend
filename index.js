@@ -43,6 +43,8 @@ async function run() {
       res.send(result);
     });
     app.get('/user', async (req, res) => {
+      const userAuth = req.headers.authorization;
+      console.log(userAuth)
       const email = req.query.email;
       const query = { email: email };
       const cursor = productCollection.find(query);
